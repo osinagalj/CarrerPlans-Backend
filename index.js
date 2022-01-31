@@ -6,6 +6,8 @@ const cors = require("cors");
 // Creamos el servidor
 const app = express();
 
+const port = process.env.PORT || 4000
+
 // Conectamos a la BD
 conectarDB();
 
@@ -22,7 +24,9 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
   })
 */
-app.listen(4000, () => {
+
+
+app.listen(port, () => {
   console.log('El servidor esta corriendo perfectamente');
 })
 
