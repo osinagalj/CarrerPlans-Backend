@@ -65,6 +65,7 @@ exports.addSubject = async (req, res) => {
 };
 
 exports.updatePlan = async (req, res) => {
+  console.log("body");
   console.log(req.body);
   try {
     const { name, years, totalYears } = req.body;
@@ -76,7 +77,16 @@ exports.updatePlan = async (req, res) => {
 
     item.name = name;
     item.totalYears = totalYears;
-    item.years = years;
+
+    item.years = [];
+
+    let claves = Object.keys(years);
+    for (let i = 0; i < claves.length; i++) {
+      let clave = claves[i];
+      console.log("insertando year" + clave);
+      console.log(years[clave].items);
+      item.years.push({ year: i, items: years[clave].items });
+    }
 
     item = await Plan.findOneAndUpdate({ _id: req.params.id }, item, {
       new: true,
@@ -189,16 +199,10 @@ exports.addQuarter = async (req, res) => {
       res.status(404).send("No existe el producto");
     }
 
-    console.log("item");
-    console.log(item);
-
     item.years.push({ year: Object.keys(item.years).length + 1, items: [] });
     console.log("crenaod nuevo año einsertando");
 
     item.totalYears = item.totalYears + 1;
-
-    console.log("item final");
-    console.log(item);
 
     item = await Plan.findOneAndUpdate({ _id: req.params.id }, item, {
       new: true,
