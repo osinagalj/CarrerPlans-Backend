@@ -12,4 +12,5 @@ router.put("/add-quarter/:id", planController.addQuarter);
 router.delete("/remove-quarter/:id/:year", planController.deleteYear);
 router.put("/add-subject/:id", planController.addSubject);
 router.put("/remove-subject/:id/:idSubject", planController.removeSubject);
+router.get("/:id/:subject", planController.getSubjectById);
 module.exports = router;

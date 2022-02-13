@@ -40,10 +40,13 @@ exports.addSubject = async (req, res) => {
       console.log("año");
       console.log(year);
       if (year.year === itemSubject.year) {
-        // habria que ver si exite el ño, y se agrega, sino se crea el año entero nuevo
-        year.items.push(itemSubject);
-        inserto = true;
-        console.log("haciendo el push de la materia");
+        // habria que ver si exite el ño, y se agrega, sino se crea el año entero nuevo+
+        if (inserto === false) {
+          year.items.push(itemSubject);
+          inserto = true;
+          console.log("haciendo el push de la materia");
+          plan.years = plan.years;
+        }
       } else {
         console.log(
           "no se inserto, year:" + year.year + " , " + itemSubject.year
@@ -149,6 +152,7 @@ exports.getPlans = async (req, res) => {
 };
 
 exports.deleteYear = async (req, res) => {
+  console.log("remove year..");
   console.log(req.body);
   try {
     console.log("remove column..");
@@ -251,57 +255,32 @@ exports.getPlan = async (req, res) => {
   }
 };
 
-//Obtiene el plan con todas las materias separadas en años
-/*
-exports.getPlan = async (req, res) => {
-    console.log('searching plan')
-    console.log(req.body);
-    try {
-        let plan = await Plan.findById(req.params.id);
-        console.log('PLAN ID: ' + plan._id)
-        try {
-            const items = await Subject.find();
-            console.log('subjects');
-            console.log(items);
+exports.getSubjectById = async (req, res) => {
+  try {
+    let item = await Plan.findById(req.params.id);
+    let subjectId = req.params.subject;
 
-            const years = [];
-            var i;
-            for (i = 1; i <= plan.totalYears; i++) {
-                console.log('add year' + i)
-                years.push({ year: i, items: [] });
-            }
-
-            items.map((materia) => {
-                console.log('materi')
-                console.log(materia)
-                years.map((año) => {
-                    if (año.year === materia.year && plan._id == materia.planId) {
-                        console.log('entro en')
-                        año.items.push(materia);
-                    }
-                });
-            });
-            console.log('años finaes')
-            console.log(years)
-            plan.years = years;
-            res.json(plan);
-
-        } catch (error) {
-            console.log(error);
-            res.status(500).send('Hubo un error');
+    var i;
+    var j;
+    for (i = 0; i < item.years.length; i++) {
+      if (item.years[i].items != null) {
+        let subjects = item.years[i].items;
+        for (j = 0; j < subjects.length; j++) {
+          if (subjects[j]._id == subjectId) {
+            //item.years[i].items.splice(j, 1);
+            console.log("SUbjecte");
+            res.json(item.years[i].items[j]);
+            //console.log();
+          }
         }
-
-        if (!plan) {
-            res.status(404).send('No existe el plan');
-        }
-
-
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('HUbo un error');
+      }
     }
 
-}
-
-*/
+    if (!item) {
+      res.status(404).send("No existe la materia");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("HUbo un error");
+  }
+};
